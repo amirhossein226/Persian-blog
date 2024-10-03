@@ -1,0 +1,36 @@
+{% extends "_base.html" %}
+{% load static %}
+{% block title %}داشبورد{% endblock title %}
+
+{% block content %}
+<div class="dash-sidebar">
+    <h4>حساب کابری:</h4>
+    <ul>
+        <li><a href="{% url 'account:dashboard' 'info' %}">اطلاعات حساب کاربری</a></li>
+        <li><a href="{% url 'password_change' %}">تغییر رمز عبور</a></li>
+        <li><a href="{% url 'account:dashboard' 'edit' %}">تغییر اطلاعات حساب کاربری</a></li>
+    </ul>
+    <h4>پست ها:</h4>
+    <ul>
+        <li>
+            <a href="{% url 'account:dashboard' 'archived' %}">
+                <img src="{% static 'blog_photo/archived.png' %}" width="20" alt="archived">&nbsp;&nbsp;لیست انتظار
+            </a>
+        </li>
+        <li><a href="{% url 'account:dashboard' 'read' %}">پست های خوانده شده</a></li>
+    </ul>
+    {% if request.user.is_staff %}
+    <h4>کارکنان:</h4>
+    <ul>
+        <li><a href="{% url 'account:admin_dashboard' 'published-by-staff' %}">پست های نوشته شده توسط شما</a></li>
+        <li><a href="{% url 'account:admin_dashboard' 'comments' %}">کامنت های</a></li>
+    </ul>
+    {% endif %}
+</div>
+<div class="dash-body">
+    {% block dash_body %}
+
+    {% endblock dash_body %}
+</div>
+{% endblock content %}
+{% block script %}{% endblock script %}

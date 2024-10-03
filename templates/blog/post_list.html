@@ -1,0 +1,91 @@
+{% extends "_base.html" %}
+{% load static %}
+{% load jalali_tags %}
+{% load blog_tags %}
+{% block title %}{{ "پست ها" | nospace}} و مقالات{% endblock title %}
+
+{% block content %}
+{% if tag %}
+<h1>{{ "پست های" | nospace }} منتشر شده با موضوع "{{ tag }}":</h1>
+{% else %}
+
+<h1>{{ "پست های" | nospace }} منتشر شده:</h1>
+{% endif %}
+{% for cpost in posts %}
+
+{% with cpost.post as post %}
+<div id="post-{{ post.generate_html_id }}">
+    <!-- title================================================================================================= -->
+    <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+
+    <!-- date ================================================================================================= -->
+    <p>منتشر شده در تاریخ {{ post.publish | to_jalali:'%Y/%m/%d _ %H:%M' | farsi_num }}&nbsp;&nbsp;
+        توسط&nbsp;&nbsp;&nbsp;
+        {% for author in post.authors.all %}
+        {{ author.name | default:author.username }}{% if not forloop.last %}<b>،&nbsp;</b>{% endif %}
+        {% endfor %}
+    </p>
+
+    <!-- body ================================================================================================= -->
+    <p class="just">{{ post.description | linebreaks }}</p>
+
+    <p><strong><a href="{{ post.get_absolute_url }}">ادامه پست...</a></strong></p>
+    <!-- tags================================================================================================= -->
+    {% with post.tags.all as tags %}
+    {% if tags %}
+    <p>
+        {% for tag in tags %}
+        <a href="{% url 'blog:posts_by_tag' tag.slug %}"><strong>{{ tag }}</strong></a>
+        {% if not forloop.last %}<b>،</b>{% endif %}
+        {% endfor %}
+    </p>
+    {% endif %}
+    {% endwith %}
+    <!-- post footer (liked, seen) ================================================================================ -->
+    <div>
+
+        <span>
+            <span>{{ likes_count }}</span>
+            <span><img src="{% static 'blog_photo/like.png' %}" alt="liked" width="20px"></span>
+        </span>
+
+        <!-- archive section ====================================================================================== -->
+
+        {% include 'bases/archive.html' with post=post %}
+
+        <!-- view count section ==================================================================================== -->
+        {% include 'bases/view_count.html' with views_count=cpost.view %}
+    </div>
+    {% if request.user.is_staff and request.user in post.authors.all %}
+    <div id="staff-actions">
+        <p><button class="action delete" data-id="{{ post.id }}"
+                data-targetId="{{ post.generate_html_id }}">حذف</button></p>
+        <p><a href="{% url 'blog:post_edit' id=post.id %}">ویرایش</a></p>
+    </div>
+    {% endif %}
+
+
+</div>
+{% endwith %}
+
+
+{% empty %}
+<p><strong>فعلا پستی منتشر نشده!</strong></p>
+{% endfor %}
+
+<!-- pagination ========================================================================================== -->
+{% if page.paginator.num_pages != 1 %}
+{% include 'bases/pagination.html' with page=page %}
+{% endif %}
+
+<div id="confirmation">
+    <!-- we will show confirmation message  to staff to  ensure about deletion of post -->
+    <span>x</span>
+    <p><strong></strong></p>
+    <button id="confirm">Yes</button>
+</div>
+{% endblock content %}
+<!-- delete and edit post using js -->
+{% block script %}
+<script src="{% static 'js/delete_post.js' %}"></script>
+{% endblock script %}

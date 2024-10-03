@@ -1,0 +1,7 @@
+<div class="comment-form">
+    <form action="{% url 'blog:post_comment' post_slug %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="ثبت نظر">
+    </form>
+</div>

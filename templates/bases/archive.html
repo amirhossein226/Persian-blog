@@ -1,0 +1,15 @@
+{% load static %}
+<span class="archive-container">
+    {% with archived_by=post.archived_by.all %}
+    <a href="#" data-id="{{ post.id }}" data-action="{% if user.profile in archived_by %}un{% endif %}archive"
+        data-url="{% url 'blog:like_archive' %}" data-archimg="{% static 'blog_photo/archived.png' %}"
+        data-unarchimg="{% static 'blog_photo/unarchived.png' %}" class="archive">
+
+        {% if user.profile in archived_by %}
+        <img src="{% static 'blog_photo/archived.png' %}" alt="archive" width="20">
+        {% else %}
+        <img src="{% static 'blog_photo/unarchived.png' %}" alt="unarchive" width="20">
+        {% endif %}
+    </a>
+    {% endwith %}
+</span>

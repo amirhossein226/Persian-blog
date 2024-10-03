@@ -1,0 +1,7 @@
+.env
+.venv
+cert.key
+cert.crt
+media
+static
+__pycache__/

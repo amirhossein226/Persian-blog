@@ -1,0 +1,10 @@
+{% extends '_base.html' %}
+
+
+{% block title %}خروج{% endblock title %}
+
+{% block content %}
+<h2>خروج شما با موفقیت انجام شد.</h2>
+<p><strong><a href="{% url 'blog:home' %}">بازگشت به صفحه ی اصلی</a></strong></p>
+<p><strong><a href="{% url 'login' %}">ورود مجدد</a></strong></p>
+{% endblock content %}

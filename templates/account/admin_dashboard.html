@@ -1,0 +1,128 @@
+{% extends "account/_base.html" %}
+{% load blog_tags %}
+{% load jalali_tags %}
+{% load static %}
+{% block title %}{{ request.user.username }}{% endblock title %}
+
+
+{% block dash_body %}
+
+{% if section == 'published-by-staff' %}
+<h2>پست های منتشر شده توسط شما:</h2>
+<p><strong>تعداد:&nbsp;&nbsp;{{ published|length }}</strong></p>
+<table id="published-table">
+    <thead>
+        <tr>
+            <th>عنوان</th>
+            <th>تاریخ انتشار</th>
+            <th>تاریخ آخرین بروزرسانی</th>
+            <th>وضعیت</th>
+            <th>تگ ها</th>
+            <th>تعداد بازدیدها</th>
+            <th>تعداد لایک ها</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for post, views in published %}
+        <tr id="post-{{ post.generate_html_id }}">
+            <td><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></td> <!-- عنوان -->
+            <td>{{ post.publish | to_jalali:'%Y/%m/%d _ %H:%M' | farsi_num }}</td> <!-- تاریخ انتشار -->
+            <td>{{ post.updated | to_jalali:'%Y/%m/%d _ %H:%M' | farsi_num }}</td> <!-- تاریخ آخرین بروزرسانی -->
+            <td>{{ post.get_status_display }}</td>
+            <!-- وضعیت -->
+            {% with tags=post.tags.all %}
+            {% if tags %}
+            <td> <!-- تگ ها -->
+                {% for tag in tags %}
+                <a href="{% url 'blog:posts_by_tag' tag.slug %}">
+                    {{ tag.name }}</a>{% if not forloop.last %},&nbsp;{%endif %}
+                {% endfor %}
+            </td>
+            {% else %}
+            <td>ثبت نشده</td>
+            {% endif %}
+            {% endwith %}
+            <td>{{ views }}</td> <!-- تعداد بازدیدها -->
+            <td>{{ post.likes_count }}</td> <!-- تعداد لایک ها -->
+            <td><a href="{% url 'blog:post_edit' post.id %}">ویرایش</a></td>
+            <td><a class="action delete" href="#" data-id="{{ post.id }}"
+                    data-action="{% url 'blog:delete_post' %}">حذف</a></td>
+
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">پستی توسط شما منتشر نشده </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="4"></td>
+            <td colspan="3"></td>
+        </tr>
+
+    </tbody>
+</table>
+
+<hr>
+<h2>پست های در انتظار تایید:</h2>
+<p><strong>تعداد:&nbsp;&nbsp;{{ draft | length }}</strong></p>
+<table id="draft-table">
+    <thead>
+        <tr>
+            <th>عنوان</th>
+            <th>تاریخ انتشار</th>
+            <th>تاریخ آخرین بروزرسانی</th>
+            <th>وضعیت</th>
+            <th>تگ ها</th>
+            <th>تعداد بازدیدها</th>
+            <th>تعداد لایک ها</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for post, views in draft %}
+        <tr id="post-{{ post.generate_html_id }}">
+            <td>{{ post.title }}</td> <!-- عنوان -->
+            <td>{{ post.publish | to_jalali:'%Y/%m/%d _ %H:%M' | farsi_num }}</td> <!-- تاریخ انتشار -->
+            <td>{{ post.updated | to_jalali:'%Y/%m/%d _ %H:%M' | farsi_num }}</td> <!-- تاریخ آخرین بروزرسانی -->
+            <td>{{ post.get_status_display }}</td>
+            <!-- وضعیت -->
+            {% with tags=post.tags.all %}
+            {% if tags %}
+            <td> <!-- تگ ها -->
+                {% for tag in tags %}
+                <a href="{% url 'blog:posts_by_tag' tag.slug %}">
+                    {{ tag.name }}</a>{% if not forloop.last %},&nbsp;{%endif %}
+                {% endfor %}
+            </td>
+            {% else %}
+            <td>ثبت نشده</td>
+            {% endif %}
+            {% endwith %}
+            <td>{{ views }}</td> <!-- تعداد بازدیدها -->
+            <td>{{ post.likes_count }}</td> <!-- تعداد لایک ها -->
+            <td><a href="{% url 'blog:post_edit' post.id %}">ویرایش</a></td>
+            <td><a class="action delete" href="#" data-id="{{ post.id }}"
+                    data-targetid="{{ post.generate_html_id }}">حذف</a></td>
+
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">پستی توسط شما منتشر نشده </td>
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+{% endif %}
+
+<div id="confirmation">
+    <!-- we will show confirmation message  to staff to  ensure about deletion of post -->
+    <span>x</span>
+    <p><strong></strong></p>
+    <button id="confirm">Yes</button>
+</div>
+{% endblock dash_body %}
+
+{% block script %}
+<script src="{% static 'js/delete_post.js' %}"></script>
+{% endblock script %}

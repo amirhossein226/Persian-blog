@@ -1,0 +1,29 @@
+{% extends '_base.html' %}
+
+
+{% block title %}خروج{% endblock title %}
+
+{% block content %}
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<h1>ورود</h1>
+{% if next %}
+<p>برای ورود به قسمت مورد نظر ابتدا باید وارد حساب کاربری خود شوید:</p>
+{% else %}
+<p>لطفا از فرم زیر جهت ورود به سایت استفاده کنید:</p>
+{% endif %}
+<form class="form" action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="next" value="{{next }}">
+    <input type="submit" value="ورود">
+</form>
+<p><a href="{% url 'password_reset' %}">رمز عبور خود را فراموش کرده ام.</a></p>
+<p><a href="{% url 'account:signup' %}">حساب کاربری ندارم.</a></p>
+<p><a href="{% url 'social:begin' 'google-oauth2' %}">ورود با حساب کاربری گوگل</a></p>
+{% endblock content %}

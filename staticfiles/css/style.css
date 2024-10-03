@@ -1,0 +1,90 @@
+@font-face {
+    font-family: 'Vazir-bold';
+    src: url('./fonts/vazir/Vazir-Bold.eot');
+    src: url('./fonts/vazir/Vazir-Bold.eot?#iefix') format('embedded-opentype'),
+        url('./fonts/vazir/Vazir-Bold.woff') format('woff'),
+        url('./fonts/vazir/Vazir-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'yekan-regular';
+    src: url('./fonts/yekan-font/yekan-regular.eot');
+    src: url('./fonts/yekan-font/yekan-regular.eot?#iefix') format('embedded-opentype'),
+        url('./fonts/yekan-font/yekan-regular.woff') format('woff'),
+        url('./fonts/yekan-font/yekan-regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@import url(//fonts.googleapis.com/css?family=Muli);
+
+body {
+    direction: rtl;
+    font-family: "yekan-regular", sans-serif;
+    font-size: 12px;
+}
+
+.form label {
+    display: block;
+}
+
+.bare-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: -webkit-link;
+}
+
+a {
+    text-decoration: none;
+}
+
+.dash-body {
+    padding: 0;
+    margin-right: 1rem;
+    float: left;
+    width: 70%;
+}
+
+.dash-sidebar {
+    padding: 0;
+    float: right;
+    width: 20%;
+}
+
+
+.just {
+    text-align: justify;
+    margin: 1rem;
+}
+
+#confirmation {
+    display: none;
+    position: fixed;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    background-color: green;
+    border-radius: 1rem;
+}
+
+#confirmation span {
+    position: relative;
+    top: 0;
+    right: 0;
+}
+
+.js-message {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    text-align: center;
+    width: 300px;
+    background-color: greenyellow;
+}
+
+.views-count {
+    text-align: left;
+}

@@ -1,0 +1,9 @@
+<div class="pagination">
+    {% if page.has_previous %}
+    صفحه ی <strong><a href="?page={{ page.previous_page_number }}">قبلی</a></strong>&nbsp;&nbsp;|
+    {% endif %}
+    <strong>صفحه ی {{ page.number }} از {{ page.paginator.num_pages }}</strong>&nbsp;&nbsp; |
+    {% if page.has_next %}
+    صفحه ی <strong><a href="?page={{ page.next_page_number }}">بعدی</a></strong>
+    {% endif %}
+</div>

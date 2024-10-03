@@ -1,0 +1,54 @@
+{% load static %}
+{% load blog_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>{% block title %}{% endblock title %}</title>
+    {% block extra_head %}
+    {% endblock extra_head %}
+</head>
+
+<body>
+    <div>
+        <ul class="nav">
+            <li><a href="{% url 'blog:home' %}">صفحه ی اصلی</a></li>
+            <li><a href="{% url 'blog:post_list' %}">{{ "پست ها"| nospace }} و مقالات</a></li>
+            <li>همچنین از<a href="{% url 'blog:post_feeds' %}">فیدهای</a> ما استفاده کنید</li>
+            {% if request.user.is_authenticated %}
+            <li>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <input class="bare-btn" type="submit" value="خروج">
+                </form>
+            </li>
+            <li><a href="{% url 'account:dashboard' 'info' %}">داشبورد</a></li>
+            {% else %}
+            <li><a href="{% url 'login' %}">ورود</a></li>
+            <li><a href="{% url 'account:signup' %}">ایجاد حساب</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <hr>
+    <!-- all template inheriting form this template, then I defined just below lines for displaying messages -->
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li {% if message.tags %} class='{{ message.tags }}' {% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <!-- contents ============================================================================ -->
+    {% block content %}
+    {% endblock content %}
+
+    <script src="{% static 'js/asin_script.js' %}"></script>
+    {% block script %}
+    {% endblock script %}
+</body>
+
+</html>

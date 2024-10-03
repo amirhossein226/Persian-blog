@@ -1,0 +1,151 @@
+{% extends "account/_base.html" %}
+{% load blog_tags %}
+{% load jalali_tags %}
+
+
+{% block title %}داشبورد{% endblock title %}
+
+{% block dash_body %}
+
+<!-- if user came from to dashboard,after login or by click on 'dashboard' button, the info section will show to them -->
+{% if section == 'info' %}
+<div class="info">
+    <h3>سلام {{ request.user.first_name | default:request.user.username }}</h3>
+    <h4>اطلاعات حساب کاربری:</h4>
+
+    <ul>
+        {% if user.profile.photo %}
+        <p><img src="{{ user.profile.photo.url }}" alt="?????" width="200" height="200"></p>
+        {% endif %}
+        <li><strong>نام:</strong>&nbsp;&nbsp;{{ user.first_name | default:"---" }}</li>
+        <li><strong>نام خانوادگی:</strong>&nbsp;&nbsp;{{ user.last_name | default:"---" }}</li>
+        <li><strong>نام کاربری:</strong>&nbsp;&nbsp;{{ user.username | default:"---" }}</li>
+        <li><strong>آدرس ایمیل:</strong>&nbsp;&nbsp;{{ user.email | default:"---" }}</li>
+        <li><strong>تعداد پست های در انتظار::</strong>&nbsp;&nbsp;{{ user.profile.archived_posts.count | default:'0' }}
+        </li>
+        <li><strong>تعداد پست های خوانده شده::</strong>&nbsp;&nbsp;{{ user.profile.read_posts.count | default:'0'}}</li>
+    </ul>
+</div>
+{% elif section == 'edit' %}
+
+<!-- if user click on change information, then he/she will saw the edit  section -->
+<div class="modify">
+    <h4>تغییر اطلاعات کاربری</h4>
+    <p>از فرم زیر جهت تغییر اطلاعات خود استفاده کنید</p>
+    <form class="form" action="{% url 'account:apply_user_edit' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ user_form.as_p }}
+        {{ profile_form.as_p }}
+        <input type="submit" value="اعمال تغییرات">
+    </form>
+</div>
+
+<!-- archived posts -->
+{% elif section == 'archived' %}
+<div class="archived">
+    <h2>لیست انتظار:</h2>
+    {% with archived=request.user.profile.archived_posts.all %}
+    <ul>
+        {% for post in archived %}
+        <li>
+            <div>
+                <a href="{{ post.get_absolute_url }}">
+                    <h1>{{ post.title }}</h1>
+                </a>&nbsp;&nbsp;
+                <span>منتشر شده در تاریخ&nbsp;&nbsp;{{ post.publish | to_jalali:'%Y/%m/%d' | farsi_num }}</span>
+            </div>
+            <p>{{ post.description }}</p>
+            <p>
+                <a href="#" data-id="{{ post.id }}" data-action="add-to-read" data-url="{% url 'blog:like_archive' %}"
+                    class="read">خواندم</a>
+            </p>
+        </li>
+        {% empty %}
+        <p>پستی به این لیست اضافه نشده.</p>
+        {% endfor %}
+    </ul>
+    {% endwith %}
+</div>
+
+<!-- read posts ===================================================================== -->
+{% elif section == 'read' %}
+<div class="read">
+    <h2>پست های مطالعه شده:</h2>
+    {% with read_posts=user.profile.read_posts.all %}
+    <ul>
+        {% for post in read_posts %}
+        <li>
+            <h1><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h1>
+            {{ post.publish | to_jalali:"%Y/%m/%d" | farsi_num }}
+            <p>{{ post.description }}</p>
+            <p>
+                <a href="#" data-id="{{ post.id }}" data-action="remove-from-read"
+                    data-url="{% url 'blog:like_archive' %}" class="read">حذف</a>
+            </p>
+        </li>
+        {% empty %}
+        <li>فعلا پستی به این صفحه اضافه نشده.</li>
+        {% endfor %}
+    </ul>
+    {% endwith %}
+</div>
+
+<!-- section related to staff  -->
+{% elif section == 'staff-published' %}
+<div class="staff-published">
+    <h2>پست های منتشر شده توسط شما:</h2>
+    {% for post in published %}
+    <ul>
+        <li>
+            <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+            <p>تاریخ انتشار:{{ post.publish|to_jalali:'%Y/%m/%m _ %H:%M:%S' }}</p>
+            <p>تاریخ ایجاد:{{ post.created|to_jalali:'%Y/%m/%m _ %H:%M:%S' }}</p>
+            <p>آخرین به روز رسانی:{{ post.updated|to_jalali:'%Y/%m/%m _ %H:%M:%S' }}</p>
+            <p><a href="{% url 'blog:post_edit' post.id %}">تغییر</a></p>
+        </li>
+    </ul>
+    {% if not forloop.last %}
+    <hr>
+    {% endif %}
+    {% empty %}
+    <li>پستی توسط شما منشر نشده!</li>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock dash_body %}
+{% block script %}
+<script>
+    document.querySelectorAll("a.read").forEach(clickedButton => {
+        clickedButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            const csrftoken = getCsrfToken();
+
+            const url = clickedButton.dataset.url;
+            options = {
+                method: "POST",
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                mode: 'same-origin'
+            }
+
+            let formData = new FormData();
+            formData.append('id', clickedButton.dataset.id);
+            formData.append('action', clickedButton.dataset.action);
+
+            options['body'] = formData;
+
+            fetch(url, options)
+                .then(response => response.json())
+                .then(data => {
+                    if (data['status'] === "ok") {
+                        clickedButton.parentElement.parentElement.style.display = 'none';
+                    } else {
+                        window.alert('there is a problem!')
+                    }
+                })
+
+        })
+    })
+</script>
+{% endblock script %}

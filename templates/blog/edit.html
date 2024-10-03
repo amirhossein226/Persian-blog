@@ -1,0 +1,38 @@
+{% extends '_base.html' %}
+{% load static %}
+
+
+{% block title %}تغییر پست{% endblock title %}
+
+{% block extra_head %}
+
+{{ form.media }}
+
+{% endblock extra_head %}
+
+{% block content %}
+
+
+<h4>از فرم زیر جهت اعمال تغییرات استفاده کنید:</h4>
+<form class="form edit" action="{% url 'blog:post_edit' post.id %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_div }}
+    <input type="submit" value="اعمال تغییرات">
+</form>
+
+<div id="staff-actions">
+    <p><button class="action delete" data-id="{{ post.id }}">حذف</button></p>
+</div>
+
+<div id="confirmation">
+    <!-- we will show confirmation message  to staff to  ensure about deletion of post -->
+    <span>x</span>
+    <p><strong></strong></p>
+    <button id="confirm">Yes</button>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script src="{% static 'js/delete_post.js' %}"></script>
+<script src="{% static 'js/file_handler.js' %}"></script>
+{% endblock %}
