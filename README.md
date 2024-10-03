@@ -5,7 +5,7 @@
 ```
 mkdir project && cd project
 git init
-git pull https://github.com/amirhossein226/Simple-pdf-parser-with-easygui.git
+git pull https://github.com/amirhossein226/Persian-blog.git
 ```
 
 2. Create a virtual environment and activate it:
